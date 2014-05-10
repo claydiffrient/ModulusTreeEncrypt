@@ -6,19 +6,23 @@ namespace ModulusTreeCryptography
 {
     public class ModulusTreeKey
     {
+        public List<BigInteger> Primes { get; private set; }
         public List<Level> Levels { get; private set; }
+        public Dictionary<BigInteger, BigInteger> Primorials { get; private set; } 
 
         public ModulusTreeKey(IEnumerable<BigInteger> primes)
         {
+            this.Primes = primes.ToList();
             this.Levels = new List<Level>();
+            this.Primorials = new Dictionary<BigInteger, BigInteger>();
 
-            var keys = primes.ToList();
             BigInteger count = 1;
-            for (int i = 0; i < keys.Count; i++)
+            for (int i = 0; i < this.Primes.Count; i++)
             {
-                var currentKey = keys[i];
+                var currentKey = this.Primes[i];
                 var groupCount = count;
                 count *= currentKey;
+                Primorials[currentKey] = count;
 
                 var previousCounts = Levels.Take(i).Select(l => l.NodeCount).ToList();
                 BigInteger treeSizeOfPreviousLevel = 1;
@@ -29,7 +33,7 @@ namespace ModulusTreeCryptography
                 {
                     NodeCount = count,
                     Prime = currentKey,
-                    Index = i + 1,
+                    Index = i,
                     NodesPerGroup = currentKey,
                     GroupCount = groupCount,
                     TreeSizeOfPreviousLevel = treeSizeOfPreviousLevel

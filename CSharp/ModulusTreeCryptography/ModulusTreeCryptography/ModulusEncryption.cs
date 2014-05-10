@@ -49,16 +49,11 @@ namespace ModulusTreeCryptography
         public static IEnumerable<BigInteger> GetPathToValue(IEnumerable<Level> levels, BigInteger value)
         {
             var currentLevels = levels.ToList();
-            var maxLevel = GetLevelContainingValue(currentLevels, value);
+            var maxLevel = currentLevels.GetLevelContainingValue(value);
             return currentLevels
                        .Select(level => value % level.Prime)
-                       .Take(maxLevel.Index)
+                       .Take(maxLevel.Index + 1)
                        .ToList();
-        }
-
-        public static Level GetLevelContainingValue(IEnumerable<Level> levels, BigInteger value)
-        {
-            return levels.SingleOrDefault(l => l.MinValue <= value && l.MaxValue >= value);
         }
     }
 }
