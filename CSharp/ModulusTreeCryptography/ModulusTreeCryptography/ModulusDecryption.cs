@@ -17,7 +17,6 @@ namespace ModulusTreeCryptography
                 return 1;
 
             var modulusPath = key.GetModulusPathToIndex(treeIndex).ToList();
-            Debug.WriteLine(JsonConvert.SerializeObject(modulusPath));
             var value = key.GetValueByModulusPath(modulusPath);
             var level = key.Levels[modulusPath.Count - 1];
             var size = key.Primorials[level.Prime];
@@ -25,7 +24,7 @@ namespace ModulusTreeCryptography
             {
                 value += size;
             }
-            return value;
+            return --value;
         }
 
         public static BigInteger GetValueByModulusPath(this ModulusTreeKey key, IEnumerable<BigInteger> modulusPath) // modulusPath: 0, 1, 3, 4

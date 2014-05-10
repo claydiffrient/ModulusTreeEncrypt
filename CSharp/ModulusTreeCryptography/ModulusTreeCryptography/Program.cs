@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json;
@@ -12,11 +13,87 @@ namespace ModulusTreeCryptography
         {
             var key = new ModulusTreeKey(Primality.Primes().Take(28).ToList());
 
-            TestEncryption(key);
-            Console.WriteLine();
-            TestDecryption(key);
+            //TestEncryption(key);
+            //Console.WriteLine();
+            //TestDecryption(key);
+            //Console.WriteLine();
+            RoundTripTests(key, 100);
+            //RoundTripByteTests(key, 10);
+
+            Console.WriteLine("Encrypting...");
+            TestFileEncryption(key, "testfile2", "txt");
+            Console.WriteLine("Decrypting...");
+            TestFileDecryption(key, "testfile2", "txt");
+            Console.WriteLine("Completed!");
 
             Console.ReadLine();
+        }
+
+        private static void RoundTripTests(ModulusTreeKey key, int testCount)
+        {
+            Random r = new Random();
+            byte[] bytes;
+
+            for (int i = 0; i < testCount; i++)
+            {
+                bytes = new byte[15];
+                r.NextBytes(bytes);
+                CryptographyUtilities.EnsurePositive(ref bytes);
+
+                BigInteger input = new BigInteger(bytes);
+                var encrypted = ModulusEncryption.GetIndex(key, input);
+                var decrypted = ModulusDecryption.GetValueAtIndex(key, encrypted);
+                Console.WriteLine("Input: {0}, Encrypted: {1}, Decrypted: {2}", input, encrypted, decrypted);
+                if (decrypted != input)
+                    throw new Exception("Values are not equal!");
+
+            }
+
+            Console.WriteLine("Completed!");
+        }
+
+        private static void RoundTripByteTests(ModulusTreeKey key, int testCount)
+        {
+            Random r = new Random();
+            byte[] bytes;
+
+            for (int i = 0; i < testCount; i++)
+            {
+                bytes = new byte[8];
+                r.NextBytes(bytes);
+
+                var encrypted = ModulusFileEncryption.EncryptBytes(key, bytes);
+                var decrypted = ModulusFileDecryption.DecryptBytes(key, encrypted);
+                if (!decrypted.SequenceEqual(bytes))
+                    throw new Exception("Values are not equal!");
+
+            }
+
+            Console.WriteLine("Completed!");
+        }
+
+
+        private static void TestByteArrayEncryption(ModulusTreeKey key)
+        {
+            var bytes = new List<byte>(Enumerable.Repeat((byte)0, 15));
+            bytes.Add(210);
+            var result = ModulusFileEncryption.EncryptBytes(key, bytes.ToArray());
+            Console.WriteLine("File Encryption Tests:");
+            Console.WriteLine("Input: {0}, Expected Output: {1}, Actual Output: {2}", 210, 39, JsonConvert.SerializeObject(result.Select(b => b)));
+        }
+
+        private static void TestFileEncryption(ModulusTreeKey key, string fileName, string extension)
+        {
+            var bytes = File.ReadAllBytes(string.Format("{0}.{1}", fileName, extension));
+            var result = ModulusFileEncryption.EncryptBytes(key, bytes.ToArray());
+            File.WriteAllBytes(string.Format("{0}.encrypted", fileName), result);
+        }
+
+        private static void TestFileDecryption(ModulusTreeKey key, string fileName, string extension)
+        {
+            var bytes = File.ReadAllBytes(string.Format("{0}.encrypted", fileName));
+            var result = ModulusFileDecryption.DecryptBytes(key, bytes.ToArray());
+            File.WriteAllBytes(string.Format("{0}.decrypted.{1}", fileName, extension), result);
         }
 
         private static void TestDecryption(ModulusTreeKey key)

@@ -9,6 +9,8 @@ namespace ModulusTreeCryptography
     {
         public static BigInteger GetIndex(ModulusTreeKey key, BigInteger value)
         {
+            value++;
+
             if (value == 1)
                 return 0;
 

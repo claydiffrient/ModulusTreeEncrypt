@@ -47,10 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRT.cs" />
+    <Compile Include="CryptographyUtilities.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="ModulusDecryption.cs" />
     <Compile Include="ModulusEncryption.cs" />
     <Compile Include="ModulusExtensions.cs" />
+    <Compile Include="ModulusFileDecryption.cs" />
+    <Compile Include="ModulusFileEncryption.cs" />
     <Compile Include="ModulusTreeKey.cs" />
     <Compile Include="Primality.cs" />
     <Compile Include="Program.cs" />
@@ -59,6 +62,17 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bigrock.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="testfile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="testfile2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
