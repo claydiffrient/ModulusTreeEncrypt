@@ -73,6 +73,11 @@ public class Run
             }
 
             Byte[] encrypted = ModulusFileEncryption.encryptBytes(pKey, byteObjs);
+            Byte[] decrypted = ModulusFileDecryption.decryptBytes(pKey, encrypted);
+            if (!decrypted.equals(byteObjs))
+            {
+                System.out.println("ERROR: Not Equal");
+            }
 
 
         }
