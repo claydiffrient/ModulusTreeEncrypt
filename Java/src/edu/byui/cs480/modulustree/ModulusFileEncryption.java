@@ -30,6 +30,17 @@ public class ModulusFileEncryption
             BigInteger output = encryptChunk(pKey, chunk);
             values.add(output);
         }
+        if (extraBytes != 0)
+        {
+            Byte[] chunk = Stream.of(pInputBytes).skip(chunkCount * CHUNK_SIZE).limit(extraBytes).toArray(Byte[]::new);
+            BigInteger output = encryptChunk(pKey, chunk);
+            values.add(output);
+        }
+        Byte[] tempVals = values.stream().flatMap( x -> {
+            byte[] bytes = x.toByteArray();
+            return Stream.of(CryptographyUtilities.PadToMultipleOf(bytes, 17));
+        }).toArray(Byte[]::new);
+
         return values.stream().flatMap( x -> {
                                             byte[] bytes = x.toByteArray();
                                             return Stream.of(CryptographyUtilities.PadToMultipleOf(bytes, 17));
