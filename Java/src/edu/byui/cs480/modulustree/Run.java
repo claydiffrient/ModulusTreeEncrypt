@@ -41,9 +41,15 @@ public class Run
         {
             bytes = new byte[15];
             r.nextBytes(bytes);
-            bytes = CryptographyUtilities.EnsurePositive(bytes);
+            //bytes = CryptographyUtilities.EnsurePositive(bytes);
 
-            BigInteger input = new BigInteger(bytes);
+            //EnsurePositive wasn't working here, so I replaced it with this semi-magical loop.
+            BigInteger input = BigInteger.ZERO;
+            for (int j = 0; j < bytes.length; j++)
+            {
+                input = (input.shiftLeft(8)).add(new BigInteger(Integer.toString(bytes[j] & 0xff)));
+            }
+            //BigInteger input = new BigInteger(bytes);
             BigInteger encrypted = ModulusEncryption.getIndex(pKey, input);
             BigInteger decrypted = ModulusDecryption.getValueAtIndex(pKey, encrypted);
             System.out.println("Input: " + input + ", Encrypted: " + encrypted + ", Decrypted: " + decrypted);

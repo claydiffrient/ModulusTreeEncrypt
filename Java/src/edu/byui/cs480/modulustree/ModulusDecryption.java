@@ -38,10 +38,14 @@ public class ModulusDecryption
                                                    collect(Collectors.toList());
         try
         {
-            BigInteger value = CRT.ChineseRemainder(
-                    crtValues.stream().map(v -> v.getRemainder()).collect(Collectors.toList()),
-                    crtValues.stream().map(v -> v.getModulus()).collect(Collectors.toList()));
-            return value;
+            BigInteger[] value = BigIntegerMath.solveCRT(
+                    crtValues.stream().map(v -> v.getRemainder()).toArray(BigInteger[]::new),
+                    crtValues.stream().map(v -> v.getModulus()).toArray(BigInteger[]::new));
+
+//            BigInteger value = CRT.ChineseRemainder(
+//                    crtValues.stream().map(v -> v.getRemainder()).collect(Collectors.toList()),
+//                    crtValues.stream().map(v -> v.getModulus()).collect(Collectors.toList()));
+            return value[0];
         }
         catch (Exception ex)
         {
