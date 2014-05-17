@@ -42,7 +42,7 @@ public class ModulusFileDecryption
             {
                 byteObjs[i++] = b;
             }
-            byte last = bytes[bytes.length];
+            byte last = bytes[bytes.length - 1];
             if (last == 0 || last == 1 ) //TODO: Potential bug! How to decide when to chop off the sign bit?
             {
                 byteObjs = Stream.of(bytes).limit(bytes.length - 1).toArray(Byte[]::new);

@@ -36,17 +36,21 @@ public class ModulusFileEncryption
             BigInteger output = encryptChunk(pKey, chunk);
             values.add(output);
         }
-        Byte[] tempVals = values.stream().flatMap( x -> {
+
+        ArrayList<Byte> retVal = new ArrayList<>();
+        for (BigInteger x : values)
+        {
             byte[] bytes = x.toByteArray();
-            return Stream.of(CryptographyUtilities.PadToMultipleOf(bytes, 17));
-        }).toArray(Byte[]::new);
+            byte[] out = CryptographyUtilities.PadToMultipleOf(bytes, 17);
+            for (int i = 0; i < out.length; i++)
+            {
+                retVal.add(out[i]);
+            }
+        }
+        Byte[] ret = new Byte[retVal.size()];
+        retVal.toArray(ret);
 
-        return values.stream().flatMap( x -> {
-                                            byte[] bytes = x.toByteArray();
-                                            return Stream.of(CryptographyUtilities.PadToMultipleOf(bytes, 17));
-        }).toArray(Byte[]::new);
-
-
+        return ret;
     }
 
     private static BigInteger encryptChunk(ModulusTreeKey pKey, Byte[] pChunk)
