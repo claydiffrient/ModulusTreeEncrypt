@@ -26,7 +26,7 @@ public class Run
         ModulusTreeKey key = new ModulusTreeKey(primes);
 
         //List<BigInteger> vals = ModulusEncryption.getPathToValue(key.getmLevels(), new BigInteger("23"));
-        System.out.println(ModulusEncryption.getIndex(key, new BigInteger("8")));
+        roundTripTests(key, 20);
 
 
 
@@ -41,7 +41,18 @@ public class Run
         {
             bytes = new byte[15];
             r.nextBytes(bytes);
+            bytes = CryptographyUtilities.EnsurePositive(bytes);
+
+            BigInteger input = new BigInteger(bytes);
+            BigInteger encrypted = ModulusEncryption.getIndex(pKey, input);
+            BigInteger decrypted = ModulusDecryption.getValueAtIndex(pKey, encrypted);
+            System.out.println("Input: " + input + ", Encrypted: " + encrypted + ", Decrypted: " + decrypted);
+            if (decrypted.compareTo(input) != 0)
+            {
+                System.out.println("ERROR: Not Equal");
+            }
         }
+        System.out.println("Completed.");
     }
 
 

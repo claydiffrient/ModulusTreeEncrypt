@@ -7,12 +7,13 @@ import java.lang.reflect.Array;
  */
 public class CryptographyUtilities
 {
-    public static void EnsurePositive(byte[] bytes)
+    public static byte[] EnsurePositive(byte[] bytes)
     {
         byte[] temp = new byte[bytes.length];
         System.arraycopy(bytes, 0, temp, 0, bytes.length);
         bytes = new byte[temp.length + 1];
         System.arraycopy(temp, 0, bytes, 0, temp.length);
+        return bytes;
     }
 
     public static void PadToMultipleOf(byte[] src, int pad)
