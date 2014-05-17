@@ -27,6 +27,8 @@ public class Run
 
         //List<BigInteger> vals = ModulusEncryption.getPathToValue(key.getmLevels(), new BigInteger("23"));
         roundTripTests(key, 20);
+        System.out.println("======================================================");
+        roundTripByteTest(key, 20);
 
 
 
@@ -41,15 +43,7 @@ public class Run
         {
             bytes = new byte[15];
             r.nextBytes(bytes);
-            //bytes = CryptographyUtilities.EnsurePositive(bytes);
-
-            //EnsurePositive wasn't working here, so I replaced it with this semi-magical loop.
-            BigInteger input = BigInteger.ZERO;
-            for (int j = 0; j < bytes.length; j++)
-            {
-                input = (input.shiftLeft(8)).add(new BigInteger(Integer.toString(bytes[j] & 0xff)));
-            }
-            //BigInteger input = new BigInteger(bytes);
+            BigInteger input = CryptographyUtilities.bytesToPosBigInteger(bytes);
             BigInteger encrypted = ModulusEncryption.getIndex(pKey, input);
             BigInteger decrypted = ModulusDecryption.getValueAtIndex(pKey, encrypted);
             System.out.println("Input: " + input + ", Encrypted: " + encrypted + ", Decrypted: " + decrypted);
@@ -59,6 +53,29 @@ public class Run
             }
         }
         System.out.println("Completed.");
+    }
+
+    private  static void roundTripByteTest(ModulusTreeKey pKey, int pTestCount)
+    {
+        Random r = new Random();
+        byte[] bytes;
+        for (int i = 0; i < pTestCount; i++)
+        {
+            bytes = new byte[8];
+            r.nextBytes(bytes);
+
+            //Boxing things up
+            int j = 0;
+            Byte[] byteObjs = new Byte[bytes.length];
+            for (byte b: bytes)
+            {
+                byteObjs[j++] = b;
+            }
+
+            Byte[] encrypted = ModulusFileEncryption.encryptBytes(pKey, byteObjs);
+
+
+        }
     }
 
 

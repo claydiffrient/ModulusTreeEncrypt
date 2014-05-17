@@ -44,6 +44,8 @@ public class ModulusTreeKey
         mPrimorials = new HashMap<BigInteger, BigInteger>();
 
         BigInteger count = BigInteger.ONE;
+        BigInteger treeSizeOfPreviousLevel = BigInteger.ONE;
+
         for (int i = 0; i < mPrimes.size(); i++)
         {
             BigInteger currentKey = mPrimes.get(i);
@@ -52,18 +54,9 @@ public class ModulusTreeKey
             mPrimorials.put(currentKey, count);
 
             List<BigInteger> previousCounts = mLevels.stream().
-                                                      limit(i).
-                                                      map(l -> l.getNodeCount()).
-                                                      collect(Collectors.toList());
-            BigInteger treeSizeOfPreviousLevel = BigInteger.ONE;
-            if (previousCounts.size() > 0)
-            {
-                BigInteger aggregateVal = previousCounts.stream().
-                        reduce((x, y) -> x.add(y)).get();
-                treeSizeOfPreviousLevel.add(aggregateVal);
-            }
-
-
+                    limit(i).
+                    map(l -> l.getNodeCount()).
+                    collect(Collectors.toList());
 
             Level level = new Level();
             level.setNodeCount(count);
@@ -73,8 +66,9 @@ public class ModulusTreeKey
             level.setGroupCount(groupCount);
             level.setTreeSizeOfPreviousLevel(treeSizeOfPreviousLevel);
 
-            this.mLevels.add(level);
+            treeSizeOfPreviousLevel = treeSizeOfPreviousLevel.add(count);
 
+            this.mLevels.add(level);
         }
 
         BigInteger valueCount = BigInteger.ONE;
