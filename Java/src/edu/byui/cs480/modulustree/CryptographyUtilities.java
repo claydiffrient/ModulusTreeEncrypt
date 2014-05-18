@@ -40,4 +40,22 @@ public class CryptographyUtilities
         System.arraycopy(src, 0, temp, 0, src.length);
         return temp;
     }
+
+    public static Byte[] stripPadding(Byte[] src, int paddingAmount)
+    {
+        int newLength = src.length - paddingAmount;
+        byte[] temp = new byte[newLength];
+        for (int i = 0; i < newLength; i++)
+        {
+            temp[i] = src[i];
+        }
+        //Box it up
+        int count = 0;
+        Byte[] returnVal = new Byte[temp.length];
+        for (byte b : temp)
+        {
+            returnVal[count++] = b;
+        }
+        return returnVal;
+    }
 }
