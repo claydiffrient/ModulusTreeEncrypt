@@ -17,31 +17,32 @@ public class ModulusFileEncryption
 
     public static Byte[] encryptBytes(ModulusTreeKey pKey, Byte[] pInputBytes)
     {
-        int chunkCount = (pInputBytes.length + 1) / CHUNK_SIZE;
-        int extraBytes = (pInputBytes.length + 1) % CHUNK_SIZE;
-
+        int chunkCount = pInputBytes.length / CHUNK_SIZE;
+        int extraBytes = pInputBytes.length % CHUNK_SIZE;
+/*
         Byte[] pInputBytesPlusTrim = new Byte[pInputBytes.length + 1];
         pInputBytesPlusTrim[0] = (byte)(16 - extraBytes);
         System.arraycopy(pInputBytes, 0, pInputBytesPlusTrim, 1, pInputBytes.length);
-
+*/
         List<BigInteger> values = new ArrayList<BigInteger>();
 
         for (int i = 0; i < chunkCount; i++)
         {
             int offset = i * CHUNK_SIZE;
-            Byte[] chunk = Arrays.stream(pInputBytesPlusTrim).skip(offset).limit(CHUNK_SIZE).toArray(Byte[]::new);
+            Byte[] chunk = Arrays.stream(pInputBytes).skip(offset).limit(CHUNK_SIZE).toArray(Byte[]::new);
 
             BigInteger output = encryptChunk(pKey, chunk);
             values.add(output);
         }
         if (extraBytes != 0)
         {
-            Byte[] chunk = Stream.of(pInputBytesPlusTrim).skip(chunkCount * CHUNK_SIZE).limit(extraBytes).toArray(Byte[]::new);
+            Byte[] chunk = Stream.of(pInputBytes).skip(chunkCount * CHUNK_SIZE).limit(extraBytes).toArray(Byte[]::new);
             BigInteger output = encryptChunk(pKey, chunk);
             values.add(output);
         }
 
         ArrayList<Byte> retVal = new ArrayList<>();
+        retVal.add((byte)(16 - extraBytes));
         for (BigInteger x : values)
         {
             byte[] bytes = x.toByteArray();
