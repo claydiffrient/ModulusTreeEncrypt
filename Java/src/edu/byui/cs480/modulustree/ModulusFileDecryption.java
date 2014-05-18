@@ -14,37 +14,22 @@ public class ModulusFileDecryption
 
     public static Byte[] decryptBytes(ModulusTreeKey pKey, Byte[] pInputBytes)
     {
-        //Need to strip the padding length byte from the beginning.
-        int paddingAmount = (int) pInputBytes[0];
-
-        //Now that we have that we need to remove it from our array.
-        Byte[] newInput = new Byte[pInputBytes.length - 1];
-        for (int i = 1; i < newInput.length - 1; i++)
-        {
-            newInput[i] = pInputBytes[i];
-        }
-
-
-
-        int chunkCount = newInput.length / CHUNK_SIZE;
-        int extraBytes = newInput.length % CHUNK_SIZE;
+        int chunkCount = pInputBytes.length / CHUNK_SIZE;
+        int extraBytes = pInputBytes.length % CHUNK_SIZE;
 
         List<BigInteger> values = new ArrayList<BigInteger>();
 
         for (int i = 0; i < chunkCount; i++)
         {
             int offset = i * CHUNK_SIZE;
-            Byte[] chunk = Stream.of(newInput).skip(offset).limit(CHUNK_SIZE).toArray(Byte[]::new);
+            Byte[] chunk = Stream.of(pInputBytes).skip(offset).limit(CHUNK_SIZE).toArray(Byte[]::new);
             BigInteger output = decryptChunk(pKey, chunk);
             values.add(output);
         }
         if (extraBytes != 0)
         {
-            System.out.println("This is the extra bytes block.");
-            System.out.println(extraBytes);
-            Byte[] chunk = Stream.of(newInput).skip(chunkCount * CHUNK_SIZE).limit(extraBytes).toArray(Byte[]::new);
-            Byte[] withoutPadding = CryptographyUtilities.stripPadding(chunk, paddingAmount);
-            BigInteger output = decryptChunk(pKey, withoutPadding);
+            Byte[] chunk = Stream.of(pInputBytes).skip(chunkCount * CHUNK_SIZE).limit(extraBytes).toArray(Byte[]::new);
+            BigInteger output = decryptChunk(pKey, chunk);
             values.add(output);
         }
 
