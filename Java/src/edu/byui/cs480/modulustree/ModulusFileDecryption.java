@@ -33,22 +33,20 @@ public class ModulusFileDecryption
             values.add(output);
         }
 
-        return values.stream().flatMap(x -> {
+        ArrayList<Byte> retVal = new ArrayList<>();
+        for (BigInteger x : values)
+        {
             byte[] bytes = x.toByteArray();
-            //Box it up
-            int i = 0;
-            Byte[] byteObjs = new Byte[bytes.length];
-            for (byte b: bytes)
-            {
-                byteObjs[i++] = b;
-            }
-            byte last = bytes[bytes.length - 1];
-            if (last == 0 || last == 1 ) //TODO: Potential bug! How to decide when to chop off the sign bit?
-            {
-                byteObjs = Stream.of(bytes).limit(bytes.length - 1).toArray(Byte[]::new);
-            }
-            return Stream.of(byteObjs);
-        }).toArray(Byte[]::new);
+            int requiredPadding = 16 - bytes.length;
+            for (int i = 0; i < requiredPadding; i++)
+                retVal.add((byte)0);
+            for (byte b : bytes)
+                retVal.add(b);
+        }
+        int padding = retVal.remove(0);
+        Byte[] ret = new Byte[retVal.size() - padding];
+        retVal.subList(0, retVal.size() - padding).toArray(ret);
+        return ret;
     }
 
     private static BigInteger decryptChunk(ModulusTreeKey pKey, Byte[] pChunk)

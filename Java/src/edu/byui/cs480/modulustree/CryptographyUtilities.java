@@ -37,7 +37,7 @@ public class CryptographyUtilities
     {
         int len = (src.length + pad - 1) / pad * pad;
         byte[] temp = new byte[len];
-        System.arraycopy(src, 0, temp, 0, src.length);
+        System.arraycopy(src, 0, temp, len - src.length, src.length);
         return temp;
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Arrays;
 
 public class Run
    implements Runnable
@@ -74,9 +75,20 @@ public class Run
 
             Byte[] encrypted = ModulusFileEncryption.encryptBytes(pKey, byteObjs);
             Byte[] decrypted = ModulusFileDecryption.decryptBytes(pKey, encrypted);
-            if (!decrypted.equals(byteObjs))
+            if (! Arrays.deepEquals(decrypted, byteObjs))
             {
                 System.out.println("ERROR: Not Equal");
+
+                System.out.println(byteObjs.length);
+                for (Byte b : byteObjs)
+                    System.out.print(b + " ");
+                System.out.println();
+
+                System.out.println(decrypted.length);
+                for (Byte b : decrypted)
+                    System.out.print(b + " ");
+                System.out.println();
+
             }
 
 
